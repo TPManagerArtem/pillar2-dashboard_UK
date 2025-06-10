@@ -78,6 +78,18 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        .ref-link {
+            font-size: 0.65em;
+            vertical-align: super;
+            margin-left: 2px;
+            text-decoration: none;
+            color: #4A5568;
+            font-weight: 600;
+        }
+        .ref-link:hover {
+            text-decoration: underline;
+            color: #2563EB;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -163,16 +175,16 @@
 
                 <div id="registration" class="tab-content active">
                     <h3 class="text-xl font-semibold mb-4">1. Обов'язкова Реєстрація в HMRC</h3>
-                    <p class="text-gray-600 mb-6">Кожна група, що підпадає під дію Pillar 2 та має хоча б одну юридичну особу у Великобританії, повинна одноразово зареєструватися в HMRC. Це потрібно зробити, навіть якщо не очікується сплата податку.</p>
+                    <p class="text-gray-600 mb-6">Кожна група, що підпадає під дію Pillar 2 та має хоча б одну юридичну особу у Великобританії, повинна одноразово зареєструватися в HMRC. Це потрібно зробити, навіть якщо не очікується сплата податку.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-needs-to-register" target="_blank" class="ref-link" title="HMRC: Who needs to register">¹</a></p>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                             <h4 class="font-bold">Хто реєструється?</h4>
-                            <p class="text-sm">За замовчуванням – кінцева материнська компанія (на Кіпрі). Однак група може призначити одну з британських юридичних осіб відповідальною за реєстрацію в UK.</p>
-                             <p class="text-sm mt-2 font-semibold">Важливо: податкові агенти не можуть виконати реєстрацію. Це має зробити сама компанія.</p>
+                            <p class="text-sm">За замовчуванням – кінцева материнська компанія, але група може призначити одну з британських компаній відповідальною за реєстрацію від імені всієї групи.<a href="https://www.gov.uk/government/publications/pillar-2-top-up-taxes-registration-notice-1/pillar-2-top-up-taxes-registration-notice-1--2#section-1-3" target="_blank" class="ref-link" title="HMRC Notice 1, para 1.3">²</a></p>
+                             <p class="text-sm mt-2 font-semibold">Важливо: податкові агенти не можуть виконати реєстрацію. Це має зробити сама компанія.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-can-use-the-service" target="_blank" class="ref-link" title="HMRC: Who can use the service">³</a></p>
                         </div>
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                             <h4 class="font-bold">Термін реєстрації</h4>
-                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2.</p>
+                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2.<a href="https://www.gov.uk/government/publications/pillar-2-top-up-taxes-registration-notice-1/pillar-2-top-up-taxes-registration-notice-1--2#section-1-2" target="_blank" class="ref-link" title="HMRC Notice 1, para 1.2">⁴</a></p>
                         </div>
                     </div>
                 </div>
@@ -183,7 +195,7 @@
                     <div class="space-y-4">
                         <div class="bg-gray-100 rounded-lg p-4">
                             <h4 class="font-semibold">Повідомлення про Іноземний Звіт (ORN)</h4>
-                            <p class="text-sm text-gray-600">Це повідомлення інформує HMRC про те, що GIR для всієї групи подано в іншій юрисдикції (на Кіпрі). Це критично важливий крок для уникнення штрафів за неподання звітності.</p>
+                            <p class="text-sm text-gray-600">Це повідомлення інформує HMRC про те, що GIR для всієї групи подано в іншій юрисдикції (на Кіпрі). Це критично важливий крок для уникнення штрафів за неподання звітності.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#reporting-obligations" target="_blank" class="ref-link" title="HMRC: Reporting obligations">⁵</a></p>
                         </div>
                         <div class="bg-gray-100 rounded-lg p-4">
                             <h4 class="font-semibold">Декларація з Самостійного Нарахування</h4>
@@ -191,7 +203,7 @@
                         </div>
                          <div class="bg-gray-100 rounded-lg p-4">
                             <h4 class="font-semibold">Терміни подання</h4>
-                            <p class="text-sm text-gray-600">Для першого року – **18 місяців** після закінчення звітного періоду. Для наступних років – **15 місяців**.</p>
+                            <p class="text-sm text-gray-600">Для першого року – **18 місяців** після закінчення звітного періоду. Для наступних років – **15 місяців**.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#when-to-submit-a-return" target="_blank" class="ref-link" title="HMRC: When to submit a return">⁶</a></p>
                         </div>
                     </div>
                 </div>
@@ -201,7 +213,7 @@
                     <p class="text-gray-600 mb-6">DTT – це ключове пряме податкове зобов'язання у Великобританії. Він гарантує, що Великобританія першою стягне податок з низькооподаткованих британських прибутків до мінімальної ставки 15%.</p>
                     <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
                         <h4 class="font-bold">Пріоритет DTT</h4>
-                        <p class="text-sm">DTT сплачується у Великобританії незалежно від подання GIR та розрахунків IIR на Кіпрі. Податок, сплачений за DTT у Великобританії, повинен зменшити будь-який додатковий податок, що в іншому випадку підлягав би сплаті за IIR на Кіпрі щодо британських прибутків.</p>
+                        <p class="text-sm">DTT сплачується у Великобританії незалежно від подання GIR та розрахунків IIR на Кіпрі. Податок, сплачений за DTT у Великобританії, повинен зменшити будь-який додатковий податок, що в іншому випадку підлягав би сплаті за IIR на Кіпрі щодо британських прибутків.<a href="https://www.gov.uk/government/publications/introduction-of-the-multinational-top-up-tax/multinational-top-up-tax-2#domestic-top-up-tax" target="_blank" class="ref-link" title="HMRC: Domestic Top-up Tax">⁷</a></p>
                     </div>
                 </div>
             </div>
@@ -228,7 +240,7 @@
 
         <section id="safe-harbours" class="py-16 section-fade-in">
             <h2 class="text-3xl font-bold text-center mb-2">Перехідні Безпечні Гавані</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Ці правила можуть тимчасово (до 2026 року) спростити комплаєнс, вважаючи додатковий податок у юрисдикції нульовим. Оцінка базується на даних Звіту CbCR. Успішне проходження одного з тестів звільняє від повних розрахунків GloBE на цей рік.</p>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Ці правила можуть тимчасово (до 2026 року) спростити комплаєнс, вважаючи додатковий податок у юрисдикції нульовим. Оцінка базується на даних Звіту CbCR. Успішне проходження одного з тестів звільняє від повних розрахунків GloBE на цей рік.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-transitional-safe-harbours/transitional-safe-harbours-for-multinational-top-up-tax-and-domestic-top-up-tax" target="_blank" class="ref-link" title="HMRC: Transitional Safe Harbours">⁸</a></p>
 
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
@@ -246,13 +258,13 @@
             </div>
              <div class="mt-8 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg" role="alert">
                 <p class="font-bold">Принцип "Один Раз Вийшов – Назавжди Вийшов"</p>
-                <p>Якщо ваша група не відповідає критеріям безпечної гавані в одному періоді, ви не зможете скористатися нею в будь-якому наступному періоді. Це робить початкову оцінку критично важливою.</p>
+                <p>Якщо ваша група не відповідає критеріям безпечної гавані в одному періоді, ви не зможете скористатися нею в будь-якому наступному періоді. Це робить початкову оцінку критично важливою.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-transitional-safe-harbours/transitional-safe-harbours-for-multinational-top-up-tax-and-domestic-top-up-tax#once-out-always-out-approach" target="_blank" class="ref-link" title="HMRC: Once out, always out approach">⁹</a></p>
             </div>
         </section>
         
         <section id="penalties" class="py-16 section-fade-in">
             <h2 class="text-3xl font-bold text-center mb-2">Ризики та Штрафи</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Недотримання вимог Pillar 2 у Великобританії може призвести до значних фінансових санкцій. Нижче наведено зведення основних штрафів.</p>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Недотримання вимог Pillar 2 у Великобританії може призвести до значних фінансових санкцій. Нижче наведено зведення основних штрафів.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-guidance/administrative-guidance-for-the-multinational-top-up-tax-and-domestic-top-up-tax#penalties" target="_blank" class="ref-link" title="HMRC: Penalties">¹⁰</a></p>
             <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50">
@@ -264,15 +276,15 @@
                     <tbody class="divide-y">
                         <tr>
                             <td class="p-4 font-medium">Неподання реєстрації</td>
-                            <td class="p-4">До 100% від суми податку, що підлягає сплаті.</td>
+                            <td class="p-4">Можливий щоденний штраф, що зростає з часом.</td>
                         </tr>
                         <tr>
-                            <td class="p-4 font-medium">Несвоєчасне подання ORN / Декларації</td>
-                            <td class="p-4">Від £100 до £200 + £60/день (для ORN) або % від несплаченого податку (для декларації).</td>
+                            <td class="p-4 font-medium">Несвоєчасне подання Декларації</td>
+                            <td class="p-4">Від £100 + щоденні штрафи.</td>
                         </tr>
                         <tr>
                             <td class="p-4 font-medium">Несвоєчасна сплата податку</td>
-                            <td class="p-4">Поетапно: 5% від несплаченого податку через 30 днів, потім ще 5% через 6 та 12 місяців.</td>
+                            <td class="p-4">Поетапно: % від несплаченого податку через 30 днів, 6 та 12 місяців.</td>
                         </tr>
                          <tr>
                             <td class="p-4 font-medium">Неведення/незбереження облікових записів</td>
@@ -328,7 +340,7 @@
     
     <footer class="bg-gray-800 text-white mt-16">
         <div class="container mx-auto px-6 py-4 text-center text-sm">
-            <p>&copy; 2025 Pillar 2 Navigator. Цей інструмент є ілюстративним і не є податковою консультацією.</p>
+            <p>&copy; 2024 Pillar 2 Navigator. Цей інструмент є ілюстративним і не є податковою консультацією.</p>
         </div>
     </footer>
 
@@ -450,9 +462,9 @@
                                 time: {
                                     unit: 'month',
                                     displayFormats: {
-                                        month: 'MMM yyyy'
+                                        month: 'MMM yy'
                                     },
-                                    tooltipFormat: 'dd MMM yyyy'
+                                    tooltipFormat: 'dd MMM yy'
                                 },
                                 min: endDate,
                             }
