@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: The application is designed as a task-oriented, single-page dashboard to guide a user (e.g., a tax manager) through UK Pillar 2 compliance for a group with a Cypriot parent company. The structure prioritizes user action and quick access to critical information over the linear format of the source report. A sticky navigation bar allows easy movement between thematic sections: Key Obligations (broken down into actionable steps), a dynamic Compliance Calendar (the main interactive tool), Safe Harbour analysis, Penalties, and Recommendations. This structure was chosen because the primary user need is not to read a report, but to understand specific obligations, identify key dates, and assess risks quickly. The interactive calendar directly answers "What are my deadlines?", which is a critical user question. -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, single-page dashboard to guide a user (e.g., a tax manager) through UK Pillar 2 compliance for a group with a Cypriot parent company. The structure prioritizes user action and quick access to critical information over the linear format of the source report. A sticky navigation bar allows easy movement between thematic sections: Key Obligations, a dynamic Compliance Calendar, Safe Harbour analysis, Penalties, Recommendations, and a dedicated Sources section for official documents. This structure was chosen because the primary user need is not to read a report, but to understand specific obligations, identify key dates, and access primary source documents easily. The interactive calendar directly answers "What are my deadlines?", which is a critical user question. -->
     <!-- Visualization & Content Choices: 
         - Goal: Compare UK vs. Cyprus rules. Method: Horizontal Bar Chart (Chart.js). Interaction: Visual comparison of implementation timelines. Justification: A chart is much clearer than a text description for comparing dates across two jurisdictions.
         - Goal: Provide personalized deadlines. Method: Interactive Timeline (Chart.js). Interaction: User selects their financial year-end, and the chart dynamically calculates and displays deadlines for registration and reporting. Justification: This is the app's core value, turning generic information into a specific, actionable tool.
@@ -107,11 +107,11 @@
             </div>
             <div class="hidden md:flex items-center space-x-6">
                 <a href="#overview" class="nav-link px-2 py-1">Огляд</a>
-                <a href="#obligations" class="nav-link px-2 py-1">Зобов'язання в UK</a>
+                <a href="#obligations" class="nav-link px-2 py-1">Зобов'язання</a>
                 <a href="#calendar" class="nav-link px-2 py-1">Календар</a>
                 <a href="#safe-harbours" class="nav-link px-2 py-1">Безпечні Гавані</a>
                 <a href="#penalties" class="nav-link px-2 py-1">Штрафи</a>
-                <a href="#recommendations" class="nav-link px-2 py-1">Рекомендації</a>
+                <a href="#sources" class="nav-link px-2 py-1">Джерела</a>
             </div>
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
@@ -121,11 +121,11 @@
         </nav>
         <div id="mobile-menu" class="hidden md:hidden">
             <a href="#overview" class="block py-2 px-6 text-sm nav-link">Огляд</a>
-            <a href="#obligations" class="block py-2 px-6 text-sm nav-link">Зобов'язання в UK</a>
+            <a href="#obligations" class="block py-2 px-6 text-sm nav-link">Зобов'язання</a>
             <a href="#calendar" class="block py-2 px-6 text-sm nav-link">Календар</a>
             <a href="#safe-harbours" class="block py-2 px-6 text-sm nav-link">Безпечні Гавані</a>
             <a href="#penalties" class="block py-2 px-6 text-sm nav-link">Штрафи</a>
-            <a href="#recommendations" class="block py-2 px-6 text-sm nav-link">Рекомендації</a>
+            <a href="#sources" class="block py-2 px-6 text-sm nav-link">Джерела</a>
         </div>
     </header>
 
@@ -185,12 +185,12 @@
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                             <h4 class="font-bold">Хто реєструється?</h4>
-                            <p class="text-sm">За замовчуванням – кінцева материнська компанія, але група може призначити одну з британських компаній відповідальною за реєстрацію від імені всієї групи.<a href="https://www.gov.uk/government/publications/pillar-2-top-up-taxes-registration-notice-1/pillar-2-top-up-taxes-registration-notice-1#section-1-3" target="_blank" class="ref-link" title="HMRC Notice 1, para 1.3">2</a></p>
+                            <p class="text-sm">За замовчуванням – кінцева материнська компанія, але група може призначити одну з британських компаній відповідальною. Деталі щодо вимог та процедури номінування містяться в офіційному роз'ясненні HMRC Notice 1 (див. розділ "Джерела").</p>
                              <p class="text-sm mt-2 font-semibold">Важливо: податкові агенти не можуть виконати реєстрацію. Це має зробити сама компанія.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-can-use-the-service" target="_blank" class="ref-link" title="HMRC: Who can use the service">3</a></p>
                         </div>
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                             <h4 class="font-bold">Термін реєстрації</h4>
-                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2.<a href="https://www.gov.uk/government/publications/pillar-2-top-up-taxes-registration-notice-1/pillar-2-top-up-taxes-registration-notice-1#section-1-2" target="_blank" class="ref-link" title="HMRC Notice 1, para 1.2">4</a></p>
+                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2. Точні умови визначені в HMRC Notice 1 (див. розділ "Джерела").</p>
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                     <p class="text-gray-600 mb-6">DTT – це ключове пряме податкове зобов'язання у Великобританії. Він гарантує, що Великобританія першою стягне податок з низькооподаткованих британських прибутків до мінімальної ставки 15%.</p>
                     <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
                         <h4 class="font-bold">Пріоритет DTT</h4>
-                        <p class="text-sm">DTT сплачується у Великобританії незалежно від подання GIR та розрахунків IIR на Кіпрі. Податок, сплачений за DTT у Великобританії, повинен зменшити будь-який додатковий податок, що в іншому випадку підлягав би сплаті за IIR на Кіпрі щодо британських прибутків.<a href="https://www.gov.uk/government/publications/introduction-of-the-multinational-top-up-tax/multinational-top-up-tax#domestic-top-up-tax" target="_blank" class="ref-link" title="HMRC: Domestic Top-up Tax">7</a></p>
+                        <p class="text-sm">DTT сплачується у Великобританії незалежно від подання GIR та розрахунків IIR на Кіпрі. Податок, сплачений за DTT у Великобританії, повинен зменшити будь-який додатковий податок, що в іншому випадку підлягав би сплаті за IIR на Кіпрі щодо британських прибутків.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#multinational-top-up-tax-and-domestic-top-up-tax" target="_blank" class="ref-link" title="HMRC: Domestic Top-up Tax">7</a></p>
                     </div>
                 </div>
             </div>
@@ -246,7 +246,7 @@
 
         <section id="safe-harbours" class="py-16 section-fade-in">
             <h2 class="text-3xl font-bold text-center mb-2">Перехідні Безпечні Гавані</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Ці правила можуть тимчасово (до 2026 року) спростити комплаєнс, вважаючи додатковий податок у юрисдикції нульовим. Оцінка базується на даних Звіту CbCR. Успішне проходження одного з тестів звільняє від повних розрахунків GloBE на цей рік.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-transitional-safe-harbours/transitional-safe-harbours-for-multinational-top-up-tax-and-domestic-top-up-tax" target="_blank" class="ref-link" title="HMRC: Transitional Safe Harbours">8</a></p>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Ці правила можуть тимчасово (до 2026 року) спростити комплаєнс, вважаючи додатковий податок у юрисдикції нульовим. Оцінка базується на даних Звіту CbCR. Успішне проходження одного з тестів звільняє від повних розрахунків GloBE на цей рік.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#transitional-safe-harbours" target="_blank" class="ref-link" title="HMRC: Transitional Safe Harbours">8</a></p>
 
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
@@ -264,13 +264,13 @@
             </div>
              <div class="mt-8 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg" role="alert">
                 <p class="font-bold">Принцип "Один Раз Вийшов – Назавжди Вийшов"</p>
-                <p>Якщо ваша група не відповідає критеріям безпечної гавані в одному періоді, ви не зможете скористатися нею в будь-якому наступному періоді. Це робить початкову оцінку критично важливою.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-transitional-safe-harbours/transitional-safe-harbours-for-multinational-top-up-tax-and-domestic-top-up-tax#once-out-always-out-approach" target="_blank" class="ref-link" title="HMRC: Once out, always out approach">9</a></p>
+                <p>Якщо ваша група не відповідає критеріям безпечної гавані в одному періоді, ви не зможете скористатися нею в будь-якому наступному періоді. Це робить початкову оцінку критично важливою.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#once-out-always-out-approach" target="_blank" class="ref-link" title="HMRC: Once out, always out approach">9</a></p>
             </div>
         </section>
         
         <section id="penalties" class="py-16 section-fade-in">
             <h2 class="text-3xl font-bold text-center mb-2">Ризики та Штрафи</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Недотримання вимог Pillar 2 у Великобританії може призвести до значних фінансових санкцій. Нижче наведено зведення основних штрафів.<a href="https://www.gov.uk/government/publications/multinational-top-up-tax-and-domestic-top-up-tax-guidance/administrative-guidance-for-the-multinational-top-up-tax-and-domestic-top-up-tax#penalties" target="_blank" class="ref-link" title="HMRC: Penalties">10</a></p>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Недотримання вимог Pillar 2 у Великобританії може призвести до значних фінансових санкцій. Нижче наведено зведення основних штрафів.<a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax#penalties-and-appeals" target="_blank" class="ref-link" title="HMRC: Penalties">10</a></p>
             <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50">
@@ -301,45 +301,18 @@
             </div>
         </section>
 
-        <section id="recommendations" class="py-16 section-fade-in">
-            <h2 class="text-3xl font-bold text-center mb-2">Стратегічні Рекомендації</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Проактивне планування та координація є ключовими для успішного впровадження Pillar 2. Ось основні кроки, які варто зробити вашій групі.</p>
-            <div class="space-y-4 max-w-3xl mx-auto">
-                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
-                    <span class="text-green-500 mt-1">✓</span>
-                    <div>
-                        <h4 class="font-semibold">Негайна Реєстрація в UK</h4>
-                        <p class="text-sm text-gray-600">Пріоритезуйте реєстрацію в HMRC задовго до крайнього терміну, вирішивши питання "без реєстрації агентом".</p>
-                    </div>
-                </div>
-                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
-                    <span class="text-green-500 mt-1">✓</span>
-                    <div>
-                        <h4 class="font-semibold">Посилення Координації UK-Кіпр</h4>
-                        <p class="text-sm text-gray-600">Впровадьте формальні канали комунікації для узгодження даних між британськими та кіпрською компаніями.</p>
-                    </div>
-                </div>
-                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
-                    <span class="text-green-500 mt-1">✓</span>
-                    <div>
-                        <h4 class="font-semibold">Оцінка Готовності Систем</h4>
-                        <p class="text-sm text-gray-600">Перевірте, чи можуть ваші ІТ-системи збирати всі необхідні дані для GIR та DTT, і плануйте оновлення.</p>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
-                    <span class="text-green-500 mt-1">✓</span>
-                    <div>
-                        <h4 class="font-semibold">Ретельна Оцінка Безпечних Гаваней</h4>
-                        <p class="text-sm text-gray-600">Терміново проаналізуйте застосовність безпечних гаваней, пам'ятаючи про ризик "один раз вийшов – назавжди вийшов".</p>
-                    </div>
-                </div>
-                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
-                    <span class="text-green-500 mt-1">✓</span>
-                    <div>
-                        <h4 class="font-semibold">Документування Всіх Рішень</h4>
-                        <p class="text-sm text-gray-600">Ведіть комплексну документацію всіх розрахунків та рішень для підготовки до можливих запитів від HMRC.</p>
-                    </div>
-                </div>
+        <section id="sources" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Офіційні Джерела</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Тут зібрані посилання на ключові офіційні документи та керівництва від HMRC стосовно Pillar 2.</p>
+            <div class="max-w-2xl mx-auto space-y-4">
+                <a href="https://assets.publishing.service.gov.uk/media/663c7e2674933dccbbb6c454/Pillar_2_top_up_taxes_registration_notice_1.odt" target="_blank" class="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <h4 class="font-semibold text-blue-600">Pillar 2 top-up taxes registration (notice 1)</h4>
+                    <p class="text-sm text-gray-600">Офіційне роз'яснення щодо процедури реєстрації, вимог до інформації та термінів. Натисніть, щоб завантажити документ (.odt).</p>
+                </a>
+                <a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax" target="_blank" class="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <h4 class="font-semibold text-blue-600">Головне керівництво по Pillar 2</h4>
+                    <p class="text-sm text-gray-600">Центральна сторінка HMRC з інформацією про звітність, безпечні гавані, штрафи та інші адміністративні аспекти.</p>
+                </a>
             </div>
         </section>
     </main>
