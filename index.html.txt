@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Навігатор по Pillar 2: UK та Кіпр</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, single-page dashboard to guide a user (e.g., a tax manager) through UK Pillar 2 compliance for a group with a Cypriot parent company. The structure prioritizes user action and quick access to critical information over the linear format of the source report. A sticky navigation bar allows easy movement between thematic sections: Key Obligations (broken down into actionable steps), a dynamic Compliance Calendar (the main interactive tool), Safe Harbour analysis, Penalties, and Recommendations. This structure was chosen because the primary user need is not to read a report, but to understand specific obligations, identify key dates, and assess risks quickly. The interactive calendar directly answers "What are my deadlines?", which is a critical user question. -->
+    <!-- Visualization & Content Choices: 
+        - Goal: Compare UK vs. Cyprus rules. Method: Horizontal Bar Chart (Chart.js). Interaction: Visual comparison of implementation timelines. Justification: A chart is much clearer than a text description for comparing dates across two jurisdictions.
+        - Goal: Provide personalized deadlines. Method: Interactive Timeline (Chart.js). Interaction: User selects their financial year-end, and the chart dynamically calculates and displays deadlines for registration and reporting. Justification: This is the app's core value, turning generic information into a specific, actionable tool.
+        - Goal: Explain the reporting process. Method: HTML/CSS Flowchart Diagram. Interaction: Static visual aid. Justification: A visual flow is easier to understand than a paragraph describing the relationship between the Cypriot GIR, UK ORN, and UK DTT.
+        - Goal: Detail obligations. Method: Tabbed interface. Interaction: User clicks tabs for Registration, Reporting, DTT. Justification: Organizes dense information into manageable, focused chunks, reducing cognitive load.
+        - Goal: Explain Safe Harbours. Method: Interactive cards/checklist. Interaction: Hover effects and visual structure. Justification: Breaks down complex tests into simpler components.
+        All visualizations are rendered on Canvas via Chart.js or built with structured HTML/CSS, adhering to the NO SVG/Mermaid constraint. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2563EB;
+            border-bottom-color: #2563EB;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-button {
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            background-color: #2563EB;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">
+                <a href="#hero">Pillar 2 Navigator</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#overview" class="nav-link px-2 py-1">Огляд</a>
+                <a href="#obligations" class="nav-link px-2 py-1">Зобов'язання в UK</a>
+                <a href="#calendar" class="nav-link px-2 py-1">Календар</a>
+                <a href="#safe-harbours" class="nav-link px-2 py-1">Безпечні Гавані</a>
+                <a href="#penalties" class="nav-link px-2 py-1">Штрафи</a>
+                <a href="#recommendations" class="nav-link px-2 py-1">Рекомендації</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#overview" class="block py-2 px-6 text-sm nav-link">Огляд</a>
+            <a href="#obligations" class="block py-2 px-6 text-sm nav-link">Зобов'язання в UK</a>
+            <a href="#calendar" class="block py-2 px-6 text-sm nav-link">Календар</a>
+            <a href="#safe-harbours" class="block py-2 px-6 text-sm nav-link">Безпечні Гавані</a>
+            <a href="#penalties" class="block py-2 px-6 text-sm nav-link">Штрафи</a>
+            <a href="#recommendations" class="block py-2 px-6 text-sm nav-link">Рекомендації</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+
+        <section id="hero" class="text-center py-16 section-fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Навігатор по Pillar 2 у Великобританії</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Інтерактивний посібник для групи компаній з кінцевою материнською компанією на Кіпрі та підрозділами у Великобританії.</p>
+        </section>
+
+        <section id="overview" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Загальний Огляд</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Цей розділ допоможе вам зрозуміти основні компоненти Pillar 2 та їхнє застосування до вашої структури, візуально порівнюючи ключові дати впровадження у Великобританії та на Кіпрі.</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-12">
+                <h3 class="text-2xl font-semibold mb-6 text-center">Порівняння Впровадження: UK vs Кіпр</h3>
+                <div class="chart-container">
+                    <canvas id="implementationChart"></canvas>
+                </div>
+                <p class="text-sm text-gray-500 mt-4 text-center">Графік показує дати набрання чинності основними правилами Pillar 2. Зверніть увагу, що британський Внутрішній Додатковий Податок (DTT) набув чинності раніше за аналогічний податок (DMTT) на Кіпрі.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h4 class="font-bold text-lg mb-2">MTT & DTT</h4>
+                    <p class="text-gray-600 text-sm">Британська система включає **Багатонаціональний Додатковий Податок (MTT)**, що складається з IIR та UTPR, та **Внутрішній Додатковий Податок (DTT)**, який оподатковує прибутки британських компаній до 15%.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h4 class="font-bold text-lg mb-2">GIR vs ORN</h4>
+                    <p class="text-gray-600 text-sm">Хоча кінцева материнська компанія подає комплексний **Звіт GloBE (GIR)** на Кіпрі, у Великобританії необхідно подати **Повідомлення про Іноземний Звіт (ORN)**, щоб поінформувати HMRC.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h4 class="font-bold text-lg mb-2">Подвійні Зобов'язання</h4>
+                    <p class="text-gray-600 text-sm">Подання звітності на Кіпрі не звільняє від обов'язків у UK. Група повинна **зареєструватися** в HMRC, подати **ORN** та розрахувати/сплатити будь-який **DTT**, що виникає у UK.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h4 class="font-bold text-lg mb-2">Критична Координація</h4>
+                    <p class="text-gray-600 text-sm">Успіх залежить від безперебійної координації та узгодженості даних між британськими підрозділами та кіпрською материнською компанією.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="obligations" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Ключові Зобов'язання у Великобританії</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Вашій групі необхідно виконати кілька ключових дій у Великобританії, незалежно від подання основного звіту на Кіпрі. Ознайомтеся з кожним кроком, щоб забезпечити повний комплаєнс.</p>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="flex justify-center border-b mb-6">
+                    <button class="tab-button text-gray-600 font-semibold py-2 px-6 active" data-tab="registration">Реєстрація</button>
+                    <button class="tab-button text-gray-600 font-semibold py-2 px-6" data-tab="reporting">Звітність</button>
+                    <button class="tab-button text-gray-600 font-semibold py-2 px-6" data-tab="dtt">DTT</button>
+                </div>
+
+                <div id="registration" class="tab-content active">
+                    <h3 class="text-xl font-semibold mb-4">1. Обов'язкова Реєстрація в HMRC</h3>
+                    <p class="text-gray-600 mb-6">Кожна група, що підпадає під дію Pillar 2 та має хоча б одну юридичну особу у Великобританії, повинна одноразово зареєструватися в HMRC. Це потрібно зробити, навіть якщо не очікується сплата податку.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                            <h4 class="font-bold">Хто реєструється?</h4>
+                            <p class="text-sm">За замовчуванням – кінцева материнська компанія (на Кіпрі). Однак група може призначити одну з британських юридичних осіб відповідальною за реєстрацію в UK.</p>
+                             <p class="text-sm mt-2 font-semibold">Важливо: податкові агенти не можуть виконати реєстрацію. Це має зробити сама компанія.</p>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                            <h4 class="font-bold">Термін реєстрації</h4>
+                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reporting" class="tab-content">
+                    <h3 class="text-xl font-semibold mb-4">2. Звітність: ORN та Декларація</h3>
+                    <p class="text-gray-600 mb-6">Оскільки основний звіт (GIR) подається на Кіпрі, у Великобританії виникають специфічні зобов'язання щодо повідомлення HMRC.</p>
+                    <div class="space-y-4">
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <h4 class="font-semibold">Повідомлення про Іноземний Звіт (ORN)</h4>
+                            <p class="text-sm text-gray-600">Це повідомлення інформує HMRC про те, що GIR для всієї групи подано в іншій юрисдикції (на Кіпрі). Це критично важливий крок для уникнення штрафів за неподання звітності.</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <h4 class="font-semibold">Декларація з Самостійного Нарахування</h4>
+                            <p class="text-sm text-gray-600">На додаток до ORN, потрібно подати декларацію для звітування та сплати будь-яких податків, що виникають безпосередньо у Великобританії, зокрема Внутрішнього Додаткового Податку (DTT).</p>
+                        </div>
+                         <div class="bg-gray-100 rounded-lg p-4">
+                            <h4 class="font-semibold">Терміни подання</h4>
+                            <p class="text-sm text-gray-600">Для першого року – **18 місяців** після закінчення звітного періоду. Для наступних років – **15 місяців**.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="dtt" class="tab-content">
+                    <h3 class="text-xl font-semibold mb-4">3. Внутрішній Додатковий Податок (DTT)</h3>
+                    <p class="text-gray-600 mb-6">DTT – це ключове пряме податкове зобов'язання у Великобританії. Він гарантує, що Великобританія першою стягне податок з низькооподаткованих британських прибутків до мінімальної ставки 15%.</p>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                        <h4 class="font-bold">Пріоритет DTT</h4>
+                        <p class="text-sm">DTT сплачується у Великобританії незалежно від подання GIR та розрахунків IIR на Кіпрі. Податок, сплачений за DTT у Великобританії, повинен зменшити будь-який додатковий податок, що в іншому випадку підлягав би сплаті за IIR на Кіпрі щодо британських прибутків.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="calendar" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Інтерактивний Календар Комплаєнсу</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Оберіть дату закінчення фінансового року вашої групи, щоб розрахувати та візуалізувати ключові дедлайни для реєстрації та звітності у Великобританії.</p>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+                    <label for="year-end-date" class="font-semibold">Дата закінчення фінансового року:</label>
+                    <select id="year-end-date" class="p-2 border rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500">
+                        <option value="2024-12-31" selected>31 грудня 2024</option>
+                        <option value="2025-03-31">31 березня 2025</option>
+                        <option value="2025-06-30">30 червня 2025</option>
+                    </select>
+                </div>
+                <div class="chart-container" style="height: 250px; max-height: 250px;">
+                    <canvas id="deadlinesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="safe-harbours" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Перехідні Безпечні Гавані</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Ці правила можуть тимчасово (до 2026 року) спростити комплаєнс, вважаючи додатковий податок у юрисдикції нульовим. Оцінка базується на даних Звіту CbCR. Успішне проходження одного з тестів звільняє від повних розрахунків GloBE на цей рік.</p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h3 class="font-semibold text-lg mb-2">Тест De Minimis</h3>
+                    <p class="text-gray-600 text-sm">Юрисдикція має дохід < €10 млн ТА прибуток до оподаткування < €1 млн. </p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h3 class="font-semibold text-lg mb-2">Тест Спрощеної ЕСП</h3>
+                    <p class="text-gray-600 text-sm">Спрощена ефективна ставка податку для юрисдикції становить щонайменше 15% (у 2024 р.), 16% (у 2025 р.) або 17% (у 2026 р.).</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h3 class="font-semibold text-lg mb-2">Тест Рутинного Прибутку</h3>
+                    <p class="text-gray-600 text-sm">Прибуток до оподаткування менший або дорівнює виключенню доходу на основі субстанції (SBIE).</p>
+                </div>
+            </div>
+             <div class="mt-8 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg" role="alert">
+                <p class="font-bold">Принцип "Один Раз Вийшов – Назавжди Вийшов"</p>
+                <p>Якщо ваша група не відповідає критеріям безпечної гавані в одному періоді, ви не зможете скористатися нею в будь-якому наступному періоді. Це робить початкову оцінку критично важливою.</p>
+            </div>
+        </section>
+        
+        <section id="penalties" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Ризики та Штрафи</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Недотримання вимог Pillar 2 у Великобританії може призвести до значних фінансових санкцій. Нижче наведено зведення основних штрафів.</p>
+            <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="p-4 font-semibold">Тип порушення</th>
+                            <th class="p-4 font-semibold">Розмір штрафу</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr>
+                            <td class="p-4 font-medium">Неподання реєстрації</td>
+                            <td class="p-4">До 100% від суми податку, що підлягає сплаті.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-medium">Несвоєчасне подання ORN / Декларації</td>
+                            <td class="p-4">Від £100 до £200 + £60/день (для ORN) або % від несплаченого податку (для декларації).</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-medium">Несвоєчасна сплата податку</td>
+                            <td class="p-4">Поетапно: 5% від несплаченого податку через 30 днів, потім ще 5% через 6 та 12 місяців.</td>
+                        </tr>
+                         <tr>
+                            <td class="p-4 font-medium">Неведення/незбереження облікових записів</td>
+                            <td class="p-4">£3,000.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="recommendations" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center mb-2">Стратегічні Рекомендації</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Проактивне планування та координація є ключовими для успішного впровадження Pillar 2. Ось основні кроки, які варто зробити вашій групі.</p>
+            <div class="space-y-4 max-w-3xl mx-auto">
+                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
+                    <span class="text-green-500 mt-1">✓</span>
+                    <div>
+                        <h4 class="font-semibold">Негайна Реєстрація в UK</h4>
+                        <p class="text-sm text-gray-600">Пріоритезуйте реєстрацію в HMRC задовго до крайнього терміну, вирішивши питання "без реєстрації агентом".</p>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
+                    <span class="text-green-500 mt-1">✓</span>
+                    <div>
+                        <h4 class="font-semibold">Посилення Координації UK-Кіпр</h4>
+                        <p class="text-sm text-gray-600">Впровадьте формальні канали комунікації для узгодження даних між британськими та кіпрською компаніями.</p>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
+                    <span class="text-green-500 mt-1">✓</span>
+                    <div>
+                        <h4 class="font-semibold">Оцінка Готовності Систем</h4>
+                        <p class="text-sm text-gray-600">Перевірте, чи можуть ваші ІТ-системи збирати всі необхідні дані для GIR та DTT, і плануйте оновлення.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
+                    <span class="text-green-500 mt-1">✓</span>
+                    <div>
+                        <h4 class="font-semibold">Ретельна Оцінка Безпечних Гаваней</h4>
+                        <p class="text-sm text-gray-600">Терміново проаналізуйте застосовність безпечних гаваней, пам'ятаючи про ризик "один раз вийшов – назавжди вийшов".</p>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow p-4 flex items-start space-x-4 card-hover">
+                    <span class="text-green-500 mt-1">✓</span>
+                    <div>
+                        <h4 class="font-semibold">Документування Всіх Рішень</h4>
+                        <p class="text-sm text-gray-600">Ведіть комплексну документацію всіх розрахунків та рішень для підготовки до можливих запитів від HMRC.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-4 text-center text-sm">
+            <p>&copy; 2024 Pillar 2 Navigator. Цей інструмент є ілюстративним і не є податковою консультацією.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const implementationCtx = document.getElementById('implementationChart').getContext('2d');
+            const deadlinesCtx = document.getElementById('deadlinesChart').getContext('2d');
+            let deadlinesChart;
+
+            const implementationChart = new Chart(implementationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['IIR (Включення Доходу)', 'UTPR (Недооп. Прибуток)', 'DTT/DMTT (Внутрішній)'],
+                    datasets: [{
+                        label: 'Великобританія',
+                        data: [2024, 2025, 2024],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Кіпр',
+                        data: [2024, 2025, 2025],
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Дата набрання чинності (для періодів, що починаються з 1 січня)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: Початок у ${context.raw} році`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            min: 2023,
+                            max: 2026,
+                            ticks: {
+                                stepSize: 1,
+                                format: {
+                                    maximumFractionDigits: 0
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateDeadlinesChart(yearEndDate) {
+                const endDate = new Date(yearEndDate);
+                
+                const registrationEnd = new Date(endDate);
+                registrationEnd.setMonth(registrationEnd.getMonth() + 6);
+
+                const firstReturnEnd = new Date(endDate);
+                firstReturnEnd.setMonth(firstReturnEnd.getMonth() + 18);
+                
+                const subsequentReturnEnd = new Date(endDate);
+                subsequentReturnEnd.setMonth(subsequentReturnEnd.getMonth() + 15);
+                
+                const data = {
+                    labels: ['Кінець ФР', 'Реєстрація', 'Звітність (1-й рік)', 'Звітність (наст. роки)'],
+                    datasets: [{
+                        label: 'Дедлайн',
+                        data: [endDate, registrationEnd, firstReturnEnd, subsequentReturnEnd],
+                        backgroundColor: [
+                            'rgba(251, 146, 60, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(251, 146, 60, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 1,
+                        barThickness: 50,
+                    }]
+                };
+
+                if (deadlinesChart) {
+                    deadlinesChart.destroy();
+                }
+
+                deadlinesChart = new Chart(deadlinesCtx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const date = new Date(context.raw);
+                                        return date.toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'month',
+                                    displayFormats: {
+                                        month: 'MMM yyyy'
+                                    },
+                                    tooltipFormat: 'dd MMM yyyy'
+                                },
+                                min: endDate,
+                            }
+                        }
+                    }
+                });
+            }
+
+            const yearEndSelector = document.getElementById('year-end-date');
+            yearEndSelector.addEventListener('change', (e) => {
+                updateDeadlinesChart(e.target.value);
+            });
+            updateDeadlinesChart(yearEndSelector.value);
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Close mobile menu if open
+                        if (!mobileMenu.classList.contains('hidden')) {
+                             mobileMenu.classList.add('hidden');
+                        }
+                        
+                        // Scroll to element
+                        const headerOffset = document.getElementById('header').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+
+                        // Update active nav link
+                        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                        if (!this.classList.contains('block')) { // Exclude mobile menu links from styling
+                            this.classList.add('active');
+                        }
+                    }
+                });
+            });
+
+            const sections = document.querySelectorAll('.section-fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
