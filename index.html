@@ -12,12 +12,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: The application is designed as a task-oriented, single-page dashboard to guide a user (e.g., a tax manager) through UK Pillar 2 compliance for a group with a Cypriot parent company. The structure prioritizes user action and quick access to critical information over the linear format of the source report. A sticky navigation bar allows easy movement between thematic sections: Key Obligations, a dynamic Compliance Calendar, Safe Harbour analysis, Penalties, Recommendations, and a dedicated Sources section for official documents. This structure was chosen because the primary user need is not to read a report, but to understand specific obligations, identify key dates, and access primary source documents easily. The interactive calendar directly answers "What are my deadlines?", which is a critical user question. -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, single-page dashboard to guide a user (e.g., a tax manager) through UK Pillar 2 compliance for a group with a Cypriot parent company. The structure prioritizes user action and quick access to critical information over the linear format of the source report. A sticky navigation bar allows easy movement between thematic sections: Key Obligations, a dynamic Compliance Calendar, Safe Harbour analysis, Penalties, and Recommendations. An interactive modal window has been added to display key official guidance without forcing a download, improving user flow. This structure was chosen because the primary user need is to understand specific obligations, identify key dates, and access primary source documents easily. The interactive calendar directly answers "What are my deadlines?", which is a critical user question. -->
     <!-- Visualization & Content Choices: 
         - Goal: Compare UK vs. Cyprus rules. Method: Horizontal Bar Chart (Chart.js). Interaction: Visual comparison of implementation timelines. Justification: A chart is much clearer than a text description for comparing dates across two jurisdictions.
         - Goal: Provide personalized deadlines. Method: Interactive Timeline (Chart.js). Interaction: User selects their financial year-end, and the chart dynamically calculates and displays deadlines for registration and reporting. Justification: This is the app's core value, turning generic information into a specific, actionable tool.
         - Goal: Explain the reporting process. Method: HTML/CSS Flowchart Diagram. Interaction: Static visual aid. Justification: A visual flow is easier to understand than a paragraph describing the relationship between the Cypriot GIR, UK ORN, and UK DTT.
-        - Goal: Detail obligations. Method: Tabbed interface. Interaction: User clicks tabs for Registration, Reporting, DTT. Justification: Organizes dense information into manageable, focused chunks, reducing cognitive load.
+        - Goal: Detail obligations. Method: Tabbed interface with an integrated modal for official notices. Interaction: User clicks tabs and a button to open a pop-up with key text from HMRC. Justification: Organizes dense information and provides instant access to source text without leaving the page.
         - Goal: Explain Safe Harbours. Method: Interactive cards/checklist. Interaction: Hover effects and visual structure. Justification: Breaks down complex tests into simpler components.
         All visualizations are rendered on Canvas via Chart.js or built with structured HTML/CSS, adhering to the NO SVG/Mermaid constraint. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -96,6 +96,9 @@
             background-color: #1D4ED8;
             transform: translateY(-1px);
         }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -111,7 +114,6 @@
                 <a href="#calendar" class="nav-link px-2 py-1">Календар</a>
                 <a href="#safe-harbours" class="nav-link px-2 py-1">Безпечні Гавані</a>
                 <a href="#penalties" class="nav-link px-2 py-1">Штрафи</a>
-                <a href="#sources" class="nav-link px-2 py-1">Джерела</a>
             </div>
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
@@ -125,7 +127,6 @@
             <a href="#calendar" class="block py-2 px-6 text-sm nav-link">Календар</a>
             <a href="#safe-harbours" class="block py-2 px-6 text-sm nav-link">Безпечні Гавані</a>
             <a href="#penalties" class="block py-2 px-6 text-sm nav-link">Штрафи</a>
-            <a href="#sources" class="block py-2 px-6 text-sm nav-link">Джерела</a>
         </div>
     </header>
 
@@ -184,13 +185,15 @@
                     <p class="text-gray-600 mb-6">Кожна група, що підпадає під дію Pillar 2 та має хоча б одну юридичну особу у Великобританії, повинна одноразово зареєструватися в HMRC. Це потрібно зробити, навіть якщо не очікується сплата податку.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-needs-to-register" target="_blank" class="ref-link" title="HMRC: Who needs to register">1</a></p>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                            <h4 class="font-bold">Хто реєструється?</h4>
-                            <p class="text-sm">За замовчуванням – кінцева материнська компанія, але група може призначити одну з британських компаній відповідальною. Деталі щодо вимог та процедури номінування містяться в офіційному роз'ясненні HMRC Notice 1 (див. розділ "Джерела").</p>
-                             <p class="text-sm mt-2 font-semibold">Важливо: податкові агенти не можуть виконати реєстрацію. Це має зробити сама компанія.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-can-use-the-service" target="_blank" class="ref-link" title="HMRC: Who can use the service">3</a></p>
+                            <h4 class="font-bold">Хто та як реєструється?</h4>
+                            <p class="text-sm">Група здійснює одну реєстрацію. За замовчуванням це робить кінцева материнська компанія, але вона може номінувати іншу, в тому числі британську, компанію. Важливо: податкові агенти не можуть виконати реєстрацію.<a href="https://www.gov.uk/guidance/report-pillar-2-top-up-taxes#who-can-use-the-service" target="_blank" class="ref-link" title="HMRC: Who can use the service">3</a></p>
+                             <div class="mt-4">
+                                <button id="open-modal-btn" class="text-sm bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">Читати витяг з HMRC Notice 1</button>
+                            </div>
                         </div>
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                             <h4 class="font-bold">Термін реєстрації</h4>
-                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2. Точні умови визначені в HMRC Notice 1 (див. розділ "Джерела").</p>
+                            <p class="text-sm">Протягом **6 місяців** з дати закінчення першого облікового періоду, за який група підпадає під дію Pillar 2. Детальні умови визначені в офіційному роз'ясненні HMRC.</p>
                         </div>
                     </div>
                 </div>
@@ -300,22 +303,51 @@
                 </table>
             </div>
         </section>
-
-        <section id="sources" class="py-16 section-fade-in">
-            <h2 class="text-3xl font-bold text-center mb-2">Офіційні Джерела</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Тут зібрані посилання на ключові офіційні документи та керівництва від HMRC стосовно Pillar 2.</p>
-            <div class="max-w-2xl mx-auto space-y-4">
-                <a href="https://assets.publishing.service.gov.uk/media/663c7e2674933dccbbb6c454/Pillar_2_top-up_taxes_registration_notice_1.odt" target="_blank" class="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h4 class="font-semibold text-blue-600">Pillar 2 top-up taxes registration (notice 1)</h4>
-                    <p class="text-sm text-gray-600">Офіційне роз'яснення щодо процедури реєстрації, вимог до інформації та термінів. Натисніть, щоб завантажити документ (.odt).</p>
-                </a>
-                <a href="https://www.gov.uk/government/publications/preparing-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax/how-to-prepare-for-the-multinational-top-up-tax-and-the-domestic-top-up-tax" target="_blank" class="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h4 class="font-semibold text-blue-600">Головне керівництво по Pillar 2</h4>
-                    <p class="text-sm text-gray-600">Центральна сторінка HMRC з інформацією про звітність, безпечні гавані, штрафи та інші адміністративні аспекти.</p>
-                </a>
-            </div>
-        </section>
     </main>
+
+    <!-- Modal -->
+    <div id="notice-modal" class="modal fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8 relative">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold mb-4">Витяг з HMRC Notice 1: Реєстрація для Pillar 2</h2>
+            <div class="text-gray-700 space-y-4 text-sm">
+                <p class="font-semibold">Це роз'яснення стосується реєстрації для двох податків Pillar 2 у Великобританії: Внутрішнього Додаткового Податку (DTT) та Багатонаціонального Додаткового Податку (MTT).</p>
+                <div>
+                    <h3 class="font-bold mb-2">Термін реєстрації</h3>
+                    <p>Групи повинні зареєструватися в HMRC протягом **6 місяців** після закінчення першого звітного періоду, який почався 31 грудня 2023 року або пізніше, і в якому група підпала під дію правил.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-2">Хто повинен реєструватися</h3>
+                    <p>Реєстрація є обов'язковою, якщо група або окрема компанія:</p>
+                    <ul class="list-disc list-inside pl-4 mt-2">
+                        <li>Має принаймні одну компанію у Великобританії.</li>
+                        <li>Має консолідований річний дохід **€750 мільйонів або більше** у двох з останніх чотирьох звітних періодів.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-2">Відповідальна особа за подання (Filing Member)</h3>
+                    <p>Тільки відповідальна особа може використовувати онлайн-сервіс для реєстрації. За замовчуванням це **кінцева материнська компанія (UPE)**, але вона може номінувати іншу компанію групи як відповідальну.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-2">Необхідна інформація для реєстрації</h3>
+                     <ul class="list-disc list-inside pl-4 mt-2">
+                        <li>Назва та юридична адреса UPE (та відповідальної особи, якщо це не UPE).</li>
+                        <li>Якщо компанія зареєстрована в UK, її реєстраційний номер (CRN) та унікальний податковий номер (UTR).</li>
+                        <li>Вказати, чи має група компанії лише у Великобританії, чи також і в інших юрисдикціях.</li>
+                        <li>Дати початку та кінця звітного періоду групи.</li>
+                        <li>Контактні дані 1-2 осіб або відділів, відповідальних за Pillar 2.</li>
+                        <li>Поштова адреса для контакту з групою.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="mt-6 pt-4 border-t text-xs text-gray-500">
+                <p>Це витяг. Повний текст доступний на офіційному сайті GOV.UK.</p>
+                <a href="https://www.gov.uk/government/publications/pillar-2-top-up-taxes-registration-notice-1" target="_blank" class="text-blue-600 hover:underline">Джерело: Pillar 2 top-up taxes registration (notice 1)</a>
+            </div>
+        </div>
+    </div>
     
     <footer class="bg-gray-800 text-white mt-16">
         <div class="container mx-auto px-6 py-4 text-center text-sm">
@@ -329,6 +361,7 @@
             const deadlinesCtx = document.getElementById('deadlinesChart').getContext('2d');
             let deadlinesChart;
 
+            // Charts
             const implementationChart = new Chart(implementationCtx, {
                 type: 'bar',
                 data: {
@@ -458,6 +491,7 @@
             });
             updateDeadlinesChart(yearEndSelector.value);
 
+            // Tabs
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             tabButtons.forEach(button => {
@@ -474,24 +508,36 @@
                 });
             });
 
+            // Modal
+            const modal = document.getElementById('notice-modal');
+            const openModalBtn = document.getElementById('open-modal-btn');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            openModalBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+            closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
+            // Mobile menu
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
             
+            // Smooth scroll
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
-                        // Close mobile menu if open
                         if (!mobileMenu.classList.contains('hidden')) {
                              mobileMenu.classList.add('hidden');
                         }
-                        
-                        // Scroll to element
                         const headerOffset = document.getElementById('header').offsetHeight;
                         const elementPosition = targetElement.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -500,16 +546,15 @@
                             top: offsetPosition,
                             behavior: "smooth"
                         });
-
-                        // Update active nav link
                         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                        if (!this.classList.contains('block')) { // Exclude mobile menu links from styling
+                        if (!this.classList.contains('block')) {
                             this.classList.add('active');
                         }
                     }
                 });
             });
 
+            // Fade in sections
             const sections = document.querySelectorAll('.section-fade-in');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
